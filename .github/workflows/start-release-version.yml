@@ -1,0 +1,19 @@
+name: Start Release Version, It must run at branch
+
+on: workflow_dispatch
+
+jobs:
+  release-pull-request:
+    name: Start Release Version
+    if: ${{ github.ref_type == 'branch' }}  # must run at branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Start Release PR
+        uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: python
+          command: manifest

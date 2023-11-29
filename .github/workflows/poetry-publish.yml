@@ -1,0 +1,63 @@
+name: Publish package, It must run on tags
+
+on:
+  workflow_dispatch:
+
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+
+jobs:
+  release-prerequisite-check:
+    name: Release prerequisite check
+    if: ${{ github.repository_visibility == 'public' && github.ref_type == 'tag' && (github.event_name == 'workflow_dispatch' || vars.AUTO_PUBLISH) }} # publich limit check
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - run: echo "::notice ::Release prerequisite check passed"
+
+  get-supported-OS-and-python-versions:
+    needs: release-prerequisite-check
+    name: Get supported OS and Python versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      os: ${{ steps.poetry-parser.outputs.os }}
+      versions: ${{ steps.poetry-parser.outputs.python_versions }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run poetry parser
+        id: poetry-parser
+        uses: yibuma/devops/actions/poetry-parser@main
+
+
+  portey-publish:
+    needs: [release-prerequisite-check, get-supported-OS-and-python-versions]
+    name: User portey publish
+    if: ${{ github.ref_type == 'tag'}}  # must run at tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      VERSION: ${{ fromJSON(needs.get-supported-OS-and-python-versions.outputs.versions)[0] }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python ${{ env.VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.VERSION }}
+          cache: 'poetry'
+
+      - name: Display Python version
+        run: python --version
+
+      - name: Publish
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PUBLISH_TOKEN }} --no-interaction
+          poetry publish --build --no-interaction

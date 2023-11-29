@@ -1,0 +1,77 @@
+name: Run unittests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+
+
+jobs:
+  get-supported-OS-and-python-versions:
+    name: Get supported OS and Python versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      os: ${{ steps.poetry-parser.outputs.os }}
+      versions: ${{ steps.poetry-parser.outputs.python_versions }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run poetry parser
+        id: poetry-parser
+        uses: yibuma/devops/actions/poetry-parser@main
+
+  run-unittest:
+    needs: get-supported-OS-and-python-versions
+    name: On ${{ matrix.os }} - ${{ matrix.version }}
+    strategy:
+      matrix:
+        version: ${{ fromJSON(needs.get-supported-OS-and-python-versions.outputs.versions) }}
+        os: ${{ fromJSON(needs.get-supported-OS-and-python-versions.outputs.os) }}
+    env:
+      OS: ${{ matrix.os }}
+      VERSION: ${{ matrix.version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Setup Python ${{ matrix.version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.version }}
+          cache: 'poetry'
+
+      - name: Display Python version
+        run: python --version
+
+      - name: Install dependencies with test group
+        run: | 
+          poetry install --with test --no-root --no-interaction
+
+      - name: Run tests
+        run: poetry run coverage run -m unittest -v
+
+      - name: Display coverage report
+        run: poetry run coverage report -m
+
+      - name: Create an XML report of coverage results
+        run: |
+          poetry run coverage xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        if: ${{ matrix.os == fromJSON(needs.get-supported-OS-and-python-versions.outputs.os)[0] && matrix.version == fromJSON(needs.get-supported-OS-and-python-versions.outputs.versions)[0] }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}  # Only required for private repositories
+          file: ./coverage.xml
+          fail_ci_if_error: true
+          env_vars: OS,VERSION

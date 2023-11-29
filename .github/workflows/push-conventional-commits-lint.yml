@@ -1,0 +1,32 @@
+name: PUSH conventional commits lint
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+
+jobs:
+  push-conventional-commits-lint:
+    name: PUSH conventional commits lint, skip the forced commit
+    if: ${{ !github.event.forced }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commits
+        if: ${{ github.event.before != '0000000000000000000000000000000000000000' }}
+        uses: yibuma/devops/actions/conventional-commits-linter@main
+        with:
+          rev-range: '${{ github.event.before }}...HEAD'
+
+      - name: Check commits diff with main
+        if: ${{ github.event.before == '0000000000000000000000000000000000000000' }}
+        uses: yibuma/devops/actions/conventional-commits-linter@main
+        with:
+          rev-range: 'origin/${{ github.event.repository.master_branch }}...HEAD'

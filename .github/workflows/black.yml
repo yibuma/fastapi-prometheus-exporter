@@ -1,0 +1,19 @@
+name: Black Lint
+
+on:
+  pull_request:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+
+jobs:
+  black-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    name: Black Lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: psf/black@stable
+

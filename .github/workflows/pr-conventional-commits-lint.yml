@@ -1,0 +1,30 @@
+name: PR conventional commits lint
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+
+jobs:
+  pr-conventional-commits-lint:
+    name: PR conventional commits lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR title
+        uses: yibuma/devops/actions/conventional-commits-linter@main
+        with:
+          message: '${{ github.event.pull_request.title }}'
+
+      - name: Check commits
+        uses: yibuma/devops/actions/conventional-commits-linter@main
+        with:
+          rev-range: '${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}'
