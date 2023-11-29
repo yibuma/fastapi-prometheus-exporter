@@ -279,13 +279,13 @@ files = [
 
 [[package]]
 name = "diff-cover"
-version = "7.7.0"
+version = "8.0.1"
 description = "Run coverage and linting reports on diffs"
 optional = false
-python-versions = ">=3.7.2,<4.0.0"
+python-versions = ">=3.8.10,<4.0.0"
 files = [
-    {file = "diff_cover-7.7.0-py3-none-any.whl", hash = "sha256:bf86f32ec999f9a9e79bf24969f7127ea7b4e55c3ef3cd9300feb13188c89736"},
-    {file = "diff_cover-7.7.0.tar.gz", hash = "sha256:60614cf7e722cf7fb1bde497afac0b514294e1e26534449622dac4da296123fb"},
+    {file = "diff_cover-8.0.1-py3-none-any.whl", hash = "sha256:1eb651e7d4e25d9d7b4b246c4abe3e9e5645f3856f92c104fca04701fc0eb093"},
+    {file = "diff_cover-8.0.1.tar.gz", hash = "sha256:cc39d199eb72fe41bcdcfee164eb5b591533b4c625580e3f9a9acc6869064d7c"},
 ]
 
 [package.dependencies]
@@ -1006,4 +1006,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "bb0e1d7ccc02c516ae53ea8cfdcb212615365780f9cad09494d297794513348c"
+content-hash = "475d626a435382cb804ecb5ba516083237781514e63404a950a860ec70e86f7a"
