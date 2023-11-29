@@ -26,7 +26,7 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 debugpy = "^1.6.6"
 pre-commit = "^3.0.2"
-commitizen = "^2.40.0"
+commitizen = "^3.12.0"
 
 [build-system]
 requires = ["poetry-core"]
