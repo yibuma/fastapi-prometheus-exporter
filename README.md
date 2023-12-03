@@ -1,4 +1,5 @@
 # fastapi-prometheus-exporter
+[![codecov](https://codecov.io/gh/yibuma/fastapi-prometheus-exporter/graph/badge.svg?token=QDbwB7a9kP)](https://codecov.io/gh/yibuma/fastapi-prometheus-exporter)  
 FastAPI Prometheus Exporter is a simple Prometheus exporter for FastAPI applications. It provides a set of metrics by default and allows you to add your own metrics as well.
 
 ## Installation
