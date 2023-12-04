@@ -1,10 +1,8 @@
 import timeit
 import typing
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, HTTPException
 from fastapi.responses import PlainTextResponse
-
-from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from prometheus_client import (
     Counter,
@@ -109,7 +107,7 @@ class PrometheusExporterMiddleware:
             response = await call_next(request)
             status_code = response.status_code
             return response
-        except StarletteHTTPException as e:
+        except HTTPException as e:
             status_code = e.status_code
             raise e
         except Exception as e:
