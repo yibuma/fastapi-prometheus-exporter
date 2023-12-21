@@ -18,7 +18,7 @@ optional = true
 coverage = "^7.1.0"
 black = "^23.11.0"
 diff-cover = "^8.0.1"
-httpx = "^0.25.2"
+httpx = ">=0.25.2,<0.27.0"
 
 
 [tool.poetry.group.dev]
